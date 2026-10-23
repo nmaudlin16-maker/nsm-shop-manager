@@ -51,7 +51,7 @@ updated.customer=$('v8EditCustomer').value.trim();updated.product=$('v8EditProdu
 if(!$('v8EditHours').disabled){const raw=$('v8EditHours').value,hours=Number(raw);if(!raw.trim()||!Number.isFinite(hours)||hours<0)throw Error('Enter total hours of zero or greater.');if(hours!==Number(o.hours||0)){if(timer?.id===o.id)throw Error('Stop the timer before correcting hours.');updated.hours=hours;updated.laborCorrections=[...(o.laborCorrections||[]),{at:new Date().toISOString(),from:Number(o.hours||0),to:hours}]}}
 if(updated.customer!==o.customer)delete updated.customerId;
 }else{updated.laborEntries=[...(o.laborEntries||[]),{at:new Date().toISOString(),hours:n('orderHoursToAdd'),source:'Manual hours'}]}
-return previousSave()};try{v8EditSubmit(e);if($('orderTools').classList.contains('hidden'))tab('orders')}finally{save=previousSave}};
+return previousSave()};try{v8EditSubmit(e);if($('orderTools').classList.contains('hidden')){draftForms.delete('orderToolsForm');draft=draftForms.size>0;tab('orders')}}finally{save=previousSave}};
 // Durable local timer checkpoint; JSON exports include the active timer for recovery.
 const v8Toggle=toggleTimer;toggleTimer=function(id){if(timer){const o=state.orders.find(x=>x.id===id);if(o&&timer.id===id){const elapsed=(Date.now()-timer.start)/3600000;o.laborEntries=[...(o.laborEntries||[]),{at:new Date().toISOString(),hours:elapsed,source:'Timer'}];delete state.activeTimer}}
 v8Toggle(id);if(timer){state.activeTimer={...timer};save()}};
@@ -75,7 +75,8 @@ $('appShell').addEventListener('input',e=>{if(e.target.type==='search'){draftFor
 let v8Current='dashboard',v8Leaving=false;const v8Tab=tab;
 function v8Show(screen){v8Current=screen;v8Tab(screen);window.scrollTo(0,0)}
 history.replaceState({nsmV8:true,guard:true},'');history.pushState({nsmV8:true,screen:'dashboard'},'');
-tab=function(screen){if(screen===v8Current)return v8Show(screen);if(draft&&!confirm('Leave this screen? Unsaved form entries remain until you reset or reload.'))return;v8Show(screen);history.pushState({nsmV8:true,screen},'')};
+function v8CurrentScreenHasDraft(){const current=$(v8Current);return !!current&&([...current.querySelectorAll('form')].some(form=>draftForms.has(form.id))||(v8Current==='settings'&&draftForms.has('settings')));}
+tab=function(screen){if(screen===v8Current)return v8Show(screen);if(v8CurrentScreenHasDraft()&&!confirm('Leave this screen? Unsaved form entries remain until you reset or reload.'))return;v8Show(screen);history.pushState({nsmV8:true,screen},'')};
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
 const exit=document.createElement('dialog');exit.id='v8Exit';exit.innerHTML='<h2>Leave NSM Shop Manager?</h2><p id="v8ExitMessage"></p><div class="actions"><button id="v8Stay">Keep working</button><button id="v8Leave" class="warn">Leave app</button></div>';document.body.append(exit);
 $('v8Stay').onclick=()=>exit.close();$('v8Leave').onclick=()=>{if(timer)return;$('v8Exit').close();v8Leaving=true;history.go(-2)};
