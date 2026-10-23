@@ -311,14 +311,13 @@ function renderCustomers(){
 const renderShop=render;render=function(){renderShop();renderCustomers()};
 $('customerSearch').oninput=renderCustomers;
 $('customerForm').oninput=()=>{customerDraft=true};
-for(const id of ['newCustomer','clearCustomer'])$(id).onclick=()=>{if(customerFormMayChange()){clearCustomer();$('customerProfileSection').classList.remove('hidden');$('customerProfileSection').scrollIntoView({behavior:'smooth',block:'start'});$('customerName').focus()}};
+for(const id of ['newCustomer','clearCustomer'])$(id).onclick=()=>{if(customerFormMayChange()){clearCustomer();$('customerSearch').value='';renderCustomers();$('customerProfileSection').classList.remove('hidden');$('customerProfileSection').scrollIntoView({behavior:'smooth',block:'start'});$('customerName').focus()}};
 $('closeCustomerProfile').onclick=()=>{if(customerFormMayChange()){clearCustomer();if(typeof draftForms==='undefined')draft=false;}};
 $('customerForm').onsubmit=e=>{
  e.preventDefault();const name=$('customerName').value.trim();if(!name){$('customerName').setCustomValidity('Enter a customer name.');$('customerName').reportValidity();return}
  const customer={id:$('customerId').value||uid(),name,phone:$('customerPhone').value.trim(),email:$('customerEmail').value.trim(),notes:$('customerNotes').value.trim()};
  const previous=state.customers||[];const next=previous.slice();const i=next.findIndex(c=>c.id===customer.id);if(i<0)next.push(customer);else next[i]=customer;
- state.customers=next;
- try{save();$('customerId').value=customer.id;customerDraft=false;draftForms.delete('customerForm');draft=draftForms.size>0;$('customerProfileHeading').textContent='Customer profile';$('deleteCustomer').classList.remove('hidden');$('deleteCustomerConfirm').classList.add('hidden');$('customerMessage').textContent='Customer saved locally; cloud sync queued.'}catch(err){state.customers=previous;$('customerMessage').textContent='Could not save customer: '+err.message}
+ try{backupBeforeChange();state.customers=next;save();clearCustomer();$('customerSearch').value='';render();$('customerProfileSection').classList.remove('hidden');$('customerMessage').textContent=(i<0?'Customer added successfully: ':'Customer updated successfully: ')+customer.name+'. Saved locally; cloud sync queued.';$('customerName').focus()}catch(err){state.customers=previous;$('customerMessage').textContent='Could not save customer: '+err.message}
 };
 $('customerName').addEventListener('input',()=>$('customerName').setCustomValidity(''));
 
