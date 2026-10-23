@@ -1,0 +1,38 @@
+{
+  "id": "./NSM_Shop_Manager_V8_Neon.html",
+  "name": "NSM Shop Manager V8",
+  "short_name": "NSM Shop",
+  "description": "NSM Designs shop manager for customers, orders, products, and materials.",
+  "start_url": "./NSM_Shop_Manager_V8_Neon.html",
+  "scope": "./",
+  "display": "standalone",
+  "lang": "en",
+  "background_color": "#080e16",
+  "theme_color": "#080e16",
+  "icons": [
+    {
+      "src": "./icons/nsm-v8-192.png?v=approved-2",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/nsm-v8-512.png?v=approved-2",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/nsm-v8-maskable-192.png?v=approved-2",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./icons/nsm-v8-maskable-512.png?v=approved-2",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
