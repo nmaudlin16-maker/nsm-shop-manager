@@ -97,4 +97,20 @@ const localButton=document.createElement('button');localButton.type='button';loc
 localButton.onclick=()=>task(async()=>{if(opened)return;activeUser={id:'v8-local-test',email:'v8-test@local'};KEY='nsm_v8_test_only';localRaw=localStorage.getItem(KEY);if(localRaw)restoreCache(localRaw);else{state=clone(seed);showApp();persistLocal()}accountUI();statusMessage('Isolated V8 test copy. Import a JSON backup in Settings to test your data. This copy does not sync to cloud.')});
 exportData=function(){if(timer)return alert('Stop the running timer before exporting so all hours are included.');exportJSON(state,'nsm-shop-manager-v8-backup.json')};
 render();
-if('serviceWorker' in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('./sw-v8.js').catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol!=='file:'){
+ const updates=document.createElement('div');updates.className='actions';updates.innerHTML='<button type="button" class="alt" id="v8UpdateApp">Check for app updates</button><p id="v8UpdateStatus" class="hint" role="status">App version V8.17</p>';$('cloudPanel').append(updates);
+ const registration=navigator.serviceWorker.register('./sw-v8.js',{updateViaCache:'none'});registration.then(reg=>reg.update()).catch(()=>{});
+ $('v8UpdateApp').onclick=async()=>{
+  const message=$('v8UpdateStatus');
+  if(timer){message.textContent='Stop your timer before updating the app.';return}
+  if(draft){message.textContent='Save or cancel your form changes before updating the app.';return}
+  if(busy){message.textContent='Wait for the current operation to finish, then check again.';return}
+  if(!navigator.onLine){message.textContent='Connect to the internet to check for app updates.';return}
+  $('v8UpdateApp').disabled=true;message.textContent='Checking for updates. Your saved shop data stays on this device.';
+  try{const reg=await registration;await reg.update();const worker=reg.installing||reg.waiting;
+   if(worker&&worker.state!=='activated')await new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(Error('Update is taking longer than expected. Try again shortly.')),15000);function check(){if(worker.state==='activated'){clearTimeout(timeout);worker.removeEventListener('statechange',check);resolve()}else if(worker.state==='redundant'){clearTimeout(timeout);worker.removeEventListener('statechange',check);reject(Error('Update could not be installed. Try again.'))}}worker.addEventListener('statechange',check);check()});
+   if(timer||draft||busy)throw Error('Finish your current work before updating.');
+   const url=new URL(location.href);url.searchParams.set('update',String(Date.now()));location.replace(url.href);
+  }catch(err){message.textContent=err.message;$('v8UpdateApp').disabled=false}
+ };
+}
