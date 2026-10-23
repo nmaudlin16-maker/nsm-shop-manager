@@ -4,6 +4,17 @@ const v8Style=document.createElement('style');v8Style.textContent=`
 .v8-picker{position:relative;margin:4px 0 12px}.v8-picker button{width:100%;text-align:left;white-space:normal;min-height:44px}
 dialog{color:#edf1f7;background:#101923;border:1px solid #55c4b6;border-radius:10px;width:min(95vw,600px);max-height:85dvh;padding:18px}dialog::backdrop{background:#000b}
 #v8Choices{overflow:auto;max-height:52dvh;display:grid;gap:6px;margin-top:12px}#v8Choices button{text-align:left;min-height:48px}
+#v8Picker[open]{display:flex;flex-direction:column;overflow:hidden;max-height:min(85dvh,85svh)}
+#v8Picker>h2,#v8Picker>label,#v8Search,#v8ChoiceStatus,#v8PickerClose{flex-shrink:0}
+#v8Choices{display:flex;flex-direction:column;flex:0 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+#v8Choices button{flex:0 0 auto;width:100%;white-space:normal;overflow-wrap:anywhere}
+#v8Picker[data-kind="customers"]{width:min(92vw,460px);padding:14px}
+#v8Picker[data-kind="customers"] h2{font-size:16px;line-height:1.3;margin-bottom:10px;letter-spacing:.02em}
+#v8Picker[data-kind="customers"] #v8Choices{max-height:40dvh;gap:4px;margin-top:8px}
+#v8Picker[data-kind="customers"] #v8Choices button{min-height:40px;padding:8px 10px;font-size:14px;line-height:1.35;border-radius:5px;background:#172b3b;border-color:#365a70;color:#edf1f7;font-weight:500}
+#v8Picker[data-kind="customers"] #v8Search{min-height:42px;padding:8px 10px;font-size:16px}
+#v8Picker[data-kind="customers"] #v8ChoiceStatus{font-size:12px;margin:8px 0}
+#v8PickerClose{align-self:flex-start;margin-top:4px}
 #v8Summary{margin:12px 0}#v8NewOrder{margin:10px 0}.v8-history{white-space:pre-wrap}nav{scrollbar-width:thin}
 `;document.head.append(v8Style);
 function v8Field(id,label,type='text',value=''){const d=document.createElement('div');d.className='field';d.innerHTML=`<label for="${id}">${label}</label><input id="${id}" type="${type}" value="${safe(value)}">`;return d}
@@ -66,7 +77,7 @@ v8EnhanceSelects();};
 $('customerSearch').oninput=()=>render();
 $('customers').querySelector('p.hint').textContent='Customer profiles link to new orders and show order history and purchase totals. Older orders match by customer name.';
 const picker=document.createElement('dialog');picker.id='v8Picker';picker.innerHTML='<h2 id="v8PickerTitle">Choose an option</h2><label for="v8Search">Search options</label><input id="v8Search" type="search" autocomplete="off"><div id="v8Choices"></div><p id="v8ChoiceStatus" role="status"></p><button type="button" id="v8PickerClose" class="alt">Cancel</button>';document.body.append(picker);
-let v8Target=null;function v8Choices(){const query=$('v8Search').value.toLowerCase();$('v8Choices').replaceChildren();const options=[...v8Target.options].filter(o=>!o.disabled&&o.textContent.toLowerCase().includes(query));for(const option of options){const b=document.createElement('button');b.type='button';b.textContent=option.textContent;b.onclick=()=>{v8Target.value=option.value;v8Target.dispatchEvent(new Event('input',{bubbles:true}));v8Target.dispatchEvent(new Event('change',{bubbles:true}));picker.close();v8EnhanceSelects()};$('v8Choices').append(b)}$('v8ChoiceStatus').textContent=options.length+' options';}
+let v8Target=null;function v8Choices(){picker.dataset.kind=v8Target.id==='v8Customer'?'customers':'options';if(v8Target.id==='v8Customer'){const selected=v8Target.value;v8Target.innerHTML='<option value="">New / unlinked customer</option>'+(state.customers||[]).map(c=>`<option value="${safe(c.id)}">${safe(c.name)}</option>`).join('');v8Target.value=selected}const query=$('v8Search').value.toLowerCase();$('v8Choices').replaceChildren();const options=[...v8Target.options].filter(o=>!o.disabled&&o.textContent.toLowerCase().includes(query));for(const option of options){const b=document.createElement('button');b.type='button';b.textContent=option.textContent;b.onclick=()=>{v8Target.value=option.value;v8Target.dispatchEvent(new Event('input',{bubbles:true}));v8Target.dispatchEvent(new Event('change',{bubbles:true}));picker.close();v8EnhanceSelects()};$('v8Choices').append(b)}$('v8ChoiceStatus').textContent=options.length+' options';}
 $('v8Search').oninput=v8Choices;$('v8PickerClose').onclick=()=>picker.close();
 function v8EnhanceSelects(){document.querySelectorAll('#appShell select:not(.status-select)').forEach(select=>{if(!select.nextElementSibling?.classList.contains('v8-picker')){const wrapper=document.createElement('div');wrapper.className='v8-picker';const button=document.createElement('button');button.type='button';button.className='alt';button.onclick=()=>{v8Target=select;$('v8PickerTitle').textContent=select.parentElement.querySelector('label')?.textContent||'Choose an option';$('v8Search').value='';v8Choices();picker.showModal();$('v8Search').focus()};wrapper.append(button);select.after(wrapper);select.style.display='none'}const button=select.nextElementSibling.firstChild;button.textContent=(select.selectedOptions[0]?.textContent||'Choose an option')+' ▾';button.disabled=select.disabled;button.setAttribute('aria-label',(select.parentElement.querySelector('label')?.textContent||'Choose')+': '+button.textContent)})}
 const v8AddRecipe=addRecipeLine;addRecipeLine=function(...args){v8AddRecipe(...args);v8EnhanceSelects()};
