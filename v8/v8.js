@@ -70,7 +70,13 @@ const v8Render=render;render=function(){v8Render();
 if(!timer&&state.activeTimer&&state.orders.some(o=>o.id===state.activeTimer.id))timer={...state.activeTimer};
 const selected=$('v8Customer').value;$('v8Customer').innerHTML='<option value="">Choose saved customer</option>'+(state.customers||[]).map(c=>`<option value="${safe(c.id)}">${safe(c.name)}</option>`).join('');$('v8Customer').value=selected;
 const nonSales=state.orders.filter(o=>!isSaleOrder(o));let summary=$('v8Summary');if(!summary){summary=document.createElement('section');summary.id='v8Summary';projectsScreen.append(summary)}
-summary.innerHTML='<h2>Donations, giveaways & prototypes</h2>'+kinds.slice(1).map(k=>{const rows=nonSales.filter(o=>o.kind===k);return `<p>${k}: ${rows.length} · materials ${money(rows.reduce((s,o)=>s+Number(o.material||0),0))} · labor ${money(rows.reduce((s,o)=>s+laborPay(o),0))} · retail value ${money(rows.reduce((s,o)=>s+Number(o.retailValue||0),0))} · total cost ${money(rows.reduce((s,o)=>s+Number(o.material||0)+Number(o.other||0)+Number(o.shippingCost||0)+laborPay(o),0))}</p>`}).join('');
+summary.innerHTML='<h2>Donations, giveaways & prototypes</h2>'+kinds.slice(1).map(k=>{const rows=nonSales.filter(o=>o.kind===k),totals=orderTotals(rows);return `<div class="project-summary-group"><h3>${k}</h3><div class="grid project-stats">
+<div class="stat"><small>Projects</small><strong>${totals.count}</strong></div>
+<div class="stat"><small>Materials</small><strong>${money(totals.materials)}</strong></div>
+<div class="stat"><small>Labor value</small><strong>${money(totals.labor)}</strong></div>
+<div class="stat"><small>Retail value</small><strong>${money(totals.retail)}</strong></div>
+<div class="stat"><small>Total cost, including labor</small><strong>${money(productionCost(totals))}</strong></div>
+</div></div>`}).join('');
 [...$('ordersList').children].forEach((item,i)=>{const o=state.orders[i];if(o?.kind){const badge=document.createElement('p');badge.className='chip';badge.textContent=o.kind;item.prepend(badge)}});
 [...$('customerList').children].forEach((item,i)=>{const name=item.querySelector('strong')?.textContent;if(!name)return;const c=(state.customers||[]).find(c=>c.name===name);const orders=state.orders.filter(o=>o.customerId===c?.id||(!o.customerId&&o.customer?.trim().toLowerCase()===name.trim().toLowerCase()));const p=document.createElement('p');p.className='hint v8-history';p.textContent=`${orders.length} orders · purchases ${money(orders.filter(o=>!o.kind||o.kind==='Sale').reduce((s,o)=>s+Number(o.price||0)+Number(o.shippingCharged||0),0))}\n`+orders.map(o=>`${o.product} · ${o.status} · ${money(o.price)}`).join('\n');item.append(p)});
 v8EnhanceSelects();};
@@ -98,7 +104,7 @@ localButton.onclick=()=>task(async()=>{if(opened)return;activeUser={id:'v8-local
 exportData=function(){if(timer)return alert('Stop the running timer before exporting so all hours are included.');exportJSON(state,'nsm-shop-manager-v8-backup.json')};
 render();
 if('serviceWorker' in navigator&&location.protocol!=='file:'){
- const updates=document.createElement('div');updates.className='actions';updates.innerHTML='<button type="button" class="alt" id="v8UpdateApp">Check for app updates</button><p id="v8UpdateStatus" class="hint" role="status">App version V8.19</p>';$('cloudPanel').append(updates);
+ const updates=document.createElement('div');updates.className='actions';updates.innerHTML='<button type="button" class="alt" id="v8UpdateApp">Check for app updates</button><p id="v8UpdateStatus" class="hint" role="status">App version V8.20</p>';$('cloudPanel').append(updates);
  const registration=navigator.serviceWorker.register('./sw-v8.js',{updateViaCache:'none'});registration.then(reg=>reg.update()).catch(()=>{});
  $('v8UpdateApp').onclick=async()=>{
   const message=$('v8UpdateStatus');

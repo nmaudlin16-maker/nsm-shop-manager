@@ -1,5 +1,5 @@
-const CACHE='nsm-v8-shell-19';
-const ASSETS=['./NSM_Shop_Manager_V8_Neon.html','./v8.js?v=release19','./NSM-Designs-banner.png','./projects.js?v=release19','./manifest-v8.webmanifest','./favicon-v8.ico','./icons/nsm-v8-16.png','./icons/nsm-v8-32.png','./icons/nsm-v8-180.png','./icons/nsm-v8-192.png','./icons/nsm-v8-512.png','./icons/nsm-v8-maskable-192.png','./icons/nsm-v8-maskable-512.png'];
+const CACHE='nsm-v8-shell-20';
+const ASSETS=['./NSM_Shop_Manager_V8_Neon.html','./v8.js?v=release20','./NSM-Designs-banner.png','./projects.js?v=release20','./manifest-v8.webmanifest','./favicon-v8.ico','./icons/nsm-v8-16.png','./icons/nsm-v8-32.png','./icons/nsm-v8-180.png','./icons/nsm-v8-192.png','./icons/nsm-v8-512.png','./icons/nsm-v8-maskable-192.png','./icons/nsm-v8-maskable-512.png'];
 const urls=new Set(ASSETS.map(p=>{const url=new URL(p,self.location);url.search='';return url.href}));
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(async cache=>{await cache.addAll(ASSETS.map(url=>new Request(url,{cache:'reload'})));await self.skipWaiting()})));
 self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
