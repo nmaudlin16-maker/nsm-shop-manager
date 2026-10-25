@@ -98,7 +98,7 @@ localButton.onclick=()=>task(async()=>{if(opened)return;activeUser={id:'v8-local
 exportData=function(){if(timer)return alert('Stop the running timer before exporting so all hours are included.');exportJSON(state,'nsm-shop-manager-v8-backup.json')};
 render();
 if('serviceWorker' in navigator&&location.protocol!=='file:'){
- const updates=document.createElement('div');updates.className='actions';updates.innerHTML='<button type="button" class="alt" id="v8UpdateApp">Check for app updates</button><p id="v8UpdateStatus" class="hint" role="status">App version V8.18</p>';$('cloudPanel').append(updates);
+ const updates=document.createElement('div');updates.className='actions';updates.innerHTML='<button type="button" class="alt" id="v8UpdateApp">Check for app updates</button><p id="v8UpdateStatus" class="hint" role="status">App version V8.19</p>';$('cloudPanel').append(updates);
  const registration=navigator.serviceWorker.register('./sw-v8.js',{updateViaCache:'none'});registration.then(reg=>reg.update()).catch(()=>{});
  $('v8UpdateApp').onclick=async()=>{
   const message=$('v8UpdateStatus');
