@@ -16,6 +16,20 @@ dialog{color:#edf1f7;background:#101923;border:1px solid #55c4b6;border-radius:1
 #v8Picker[data-kind="customers"] #v8ChoiceStatus{font-size:12px;margin:8px 0}
 #v8PickerClose{align-self:flex-start;margin-top:4px}
 #v8Summary{margin:12px 0}#v8NewOrder{margin:10px 0}.v8-history{white-space:pre-wrap}nav{scrollbar-width:thin}
+
+/* Compact, searchable option picker for phone-sized screens. */
+@media(max-width:700px){
+ #v8Picker[open]{width:min(94vw,440px);max-width:94vw;max-height:min(72dvh,620px);padding:12px;gap:5px;overscroll-behavior:contain}
+ #v8Picker h2{font-size:15px;line-height:1.3;margin:0 0 5px;overflow-wrap:anywhere}
+ #v8Picker>label{font-size:12px;margin:0}
+ #v8Picker #v8Search{font-size:16px;min-height:42px;padding:8px 10px}
+ #v8Picker #v8Choices{flex:1 1 auto;max-height:none;min-height:0;gap:5px;margin-top:5px;overflow-y:auto}
+ #v8Picker #v8Choices button{min-height:42px;padding:9px 11px;font-size:13px;line-height:1.35;text-align:left;white-space:normal}
+ #v8Picker #v8ChoiceStatus{font-size:11px;margin:2px 0}
+ #v8Picker #v8PickerClose{min-height:40px;margin:3px 0 0}
+ #v8Picker[data-kind="customers"] #v8Choices{max-height:none}
+ .v8-picker,.v8-picker button{max-width:100%;min-width:0;overflow-wrap:anywhere}
+}
 `;document.head.append(v8Style);
 function v8Field(id,label,type='text',value=''){const d=document.createElement('div');d.className='field';d.innerHTML=`<label for="${id}">${label}</label><input id="${id}" type="${type}" value="${safe(value)}">`;return d}
 function v8Select(id,label,options){const d=document.createElement('div');d.className='field';d.innerHTML=`<label for="${id}">${label}</label><select id="${id}">${options.map(x=>`<option>${safe(x)}</option>`).join('')}</select>`;return d}
