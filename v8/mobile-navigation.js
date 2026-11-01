@@ -40,5 +40,19 @@
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && shell.classList.contains('nsm-menu-open')) closeMenu(true);
   });
+  // Close on an intentional horizontal left swipe; vertical scrolling stays intact.
+  let touchStart = null;
+  nav.addEventListener('touchstart', event => {
+    if (!mobile.matches || !shell.classList.contains('nsm-menu-open') || event.touches.length !== 1) return;
+    const touch = event.touches[0];
+    touchStart = {x:touch.clientX,y:touch.clientY};
+  }, {passive:true});
+  nav.addEventListener('touchend', event => {
+    if (!touchStart || event.changedTouches.length !== 1) {touchStart=null;return;}
+    const touch=event.changedTouches[0],dx=touch.clientX-touchStart.x,dy=touch.clientY-touchStart.y;
+    touchStart=null;
+    if (dx < -65 && Math.abs(dx) > Math.abs(dy)*1.4) closeMenu(true);
+  }, {passive:true});
+  nav.addEventListener('touchcancel', () => {touchStart=null;}, {passive:true});
   mobile.addEventListener('change', () => closeMenu());
 })();
