@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NSM Shop Manager | Authorize Connection</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'unsafe-inline'; connect-src https://kjooizmwkvqqacbfeqha.supabase.co; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'">
+<style>
+:root{color-scheme:dark;font-family:system-ui,Arial,sans-serif;background:#0b111b;color:#eaf4ff}*{box-sizing:border-box}body{margin:0;padding:28px 15px}main{max-width:540px;margin:7vh auto;background:#121e2c;border:1px solid #287b9c;border-radius:16px;padding:30px;box-shadow:0 0 45px #00bcd422}h1{margin:0 0 8px;color:#69e5ff}h2{font-size:1.2rem}p{line-height:1.5;color:#c5d8e8}label{display:block;margin:16px 0 6px}input{width:100%;padding:12px;border-radius:7px;border:1px solid #648398;background:#091522;color:white;font:inherit}button{padding:12px 18px;border:0;border-radius:8px;font:inherit;font-weight:650;cursor:pointer;background:#59d8f7;color:#07121d}button.secondary{background:#27394c;color:white}button:disabled{opacity:.5;cursor:wait}.row{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}.hidden{display:none}#status{white-space:pre-wrap}code{overflow-wrap:anywhere}strong{color:white}
+</style></head><body><main>
+<h1>NSM Shop Manager</h1><p>Securely authorize a connected application to access your Shop Manager account.</p>
+<p id="status" role="status" aria-live="polite">Loading authorization request…</p>
+<section id="signin" class="hidden"><h2>Sign in to NSM Designs</h2>
+<p>Use the same Supabase credentials you use in Shop Manager. Credentials are sent only to your Supabase project.</p>
+<form id="login"><label for="email">Email</label><input id="email" type="email" required autocomplete="username">
+<label for="password">Password</label><input id="password" type="password" required autocomplete="current-password">
+<div class="row"><button type="submit">Sign in</button></div></form></section>
+<section id="consent" class="hidden"><h2>Approve access?</h2>
+<p><strong>Application:</strong> <span id="client"></span></p>
+<p><strong>Redirect destination:</strong> <code id="redirect"></code></p>
+<p><strong>Requested identity scopes:</strong> <span id="scopes"></span></p>
+<p><strong>Important:</strong> Connecting ChatGPT may allow it to read order information and request order changes through the NSM integration. Saving an order still requires separate approval in Shop Manager's integration.</p>
+<div class="row"><button id="approve" type="button">Approve connection</button><button id="deny" class="secondary" type="button">Deny</button></div></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="./oauth-consent.js"></script>
+</body></html>
