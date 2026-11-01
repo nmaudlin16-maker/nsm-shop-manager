@@ -1,5 +1,6 @@
 'use strict';
 const PROJECT='https://kjooizmwkvqqacbfeqha.supabase.co';
+const PUBLIC_KEY='sb_publishable_Vllq6d810kzL3dY4CQ-4hQ_vrQvXguF';
 const authorizationId=new URL(location.href).searchParams.get('authorization_id');
 const $=id=>document.getElementById(id);
 let client=null;
@@ -31,9 +32,7 @@ $('login').addEventListener('submit',async event=>{
  const button=$('login').querySelector('button');
  button.disabled=true;
  try{
-   const key=$('key').value.trim();
-   if(!key.startsWith('sb_publishable_'))throw Error('Enter your Supabase publishable key (not a secret key).');
-   client=window.supabase.createClient(PROJECT,key,{auth:{storage,autoRefreshToken:false,persistSession:false,detectSessionInUrl:false}});
+   client=window.supabase.createClient(PROJECT,PUBLIC_KEY,{auth:{storage,autoRefreshToken:false,persistSession:false,detectSessionInUrl:false}});
    status('Signing in to Supabase…');
    const {error}=await client.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
    $('password').value='';
