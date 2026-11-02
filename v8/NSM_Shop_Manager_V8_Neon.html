@@ -246,7 +246,7 @@ async function resumeSession(){
  try{return await resumeInFlight}finally{resumeInFlight=null}
 }
 async function resumeSessionOnce(){
- if(session||opened)return;
+ if(session)return;
  let saved;try{saved=JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{return}
  if(!saved?.refresh_token||!saved?.user?.id)return;
  const key=$('publicKey').value.trim();
