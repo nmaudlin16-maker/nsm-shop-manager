@@ -67,7 +67,7 @@ const previousSave=save;save=function(){const o=state.orders[0];o.kind=kind;o.ho
 state.customers??=[];let c=state.customers.find(x=>x.id===selected)||state.customers.find(x=>x.name.trim().toLowerCase()===name.toLowerCase());
 if(!c){c={id:uid(),name,phone:'',email:'',notes:''};state.customers.push(c)}o.customerId=c.id;
 if(hours)o.laborEntries=[{at:new Date().toISOString(),hours,source:'Initial work'}];return previousSave()};
-try{v8Submit(e);if(state.orders[0]?.createdAt){draftForms.delete('orderForm');draft=draftForms.size>0;tab('orders')}}finally{save=previousSave}};
+try{v8Submit(e);if(state.orders[0]?.createdAt){draftForms.delete('orderForm');draft=draftForms.size>0;tab(kind==='Sale'?'orders':'non-sale-projects')}}finally{save=previousSave}};
 const v8EditSubmit=$('orderToolsForm').onsubmit;
 $('orderToolsForm').onsubmit=e=>{const o=state.orders.find(x=>x.id===$('orderToolsId').value);if(!o)return v8EditSubmit(e);const previousSave=save;
 save=function(){const updated=state.orders.find(x=>x.id===o.id);if(orderToolsMode==='edit'){
