@@ -16,6 +16,36 @@
   const toggleRow = document.createElement('div');
   toggleRow.id = 'nsmMenuToggleRow';
   toggleRow.appendChild(toggle);
+  const pageTitle = document.createElement('div');
+  pageTitle.id = 'nsmCurrentPageTitle';
+  pageTitle.setAttribute('role', 'heading');
+  pageTitle.setAttribute('aria-level', '2');
+  pageTitle.style.cssText = 'display:none;text-align:center;color:#55e5ff;font-weight:800;font-size:14px;letter-spacing:.16em;text-transform:uppercase;text-shadow:0 0 12px #24cfff66;margin:10px 0 2px;overflow-wrap:anywhere;';
+  nav.before(pageTitle);
+  function updatePageTitle() {
+    const active = shell.querySelector('.tab:not(.hidden)');
+    const names = {dashboard:'Overview',customers:'Customers',orders:'Orders',products:'Products',materials:'Materials',settings:'Settings',productionStepsPage:'Production Steps'};
+    let label = names[active?.id] || 'Overview';
+    if (active?.id === 'orders') {
+      const tools = document.getElementById('orderTools');
+      if (tools && !tools.classList.contains('hidden')) {
+        const order = window.state?.orders?.find?.(o => o.id === document.getElementById('orderToolsId')?.value);
+        label = (document.getElementById('orderToolsHeading')?.textContent || 'Edit Order') + (order?.orderNumber ? ' — ' + order.orderNumber : '');
+      } else if (document.getElementById('orderArchiveView')?.value === 'completed') {
+        label = 'Completed Orders';
+      }
+    }
+    pageTitle.textContent = label;
+    pageTitle.style.display = window.matchMedia('(max-width: 700px)').matches ? 'block' : 'none';
+  }
+  const titleObserver = new MutationObserver(updatePageTitle);
+  shell.querySelectorAll('.tab').forEach(el => titleObserver.observe(el, {attributes:true,attributeFilter:['class']}));
+  const orderTools = document.getElementById('orderTools');
+  if (orderTools) titleObserver.observe(orderTools, {attributes:true,attributeFilter:['class']});
+  shell.addEventListener('click', () => setTimeout(updatePageTitle, 0));
+  window.addEventListener('popstate', updatePageTitle);
+  window.matchMedia('(max-width: 700px)').addEventListener('change', updatePageTitle);
+  updatePageTitle();
   nav.before(toggleRow);
   const shade = document.createElement('div');
   shade.id = 'nsmMenuShade';
