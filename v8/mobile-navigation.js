@@ -23,8 +23,8 @@
   pageTitle.style.cssText = 'display:none;text-align:center;color:#55e5ff;font-weight:800;font-size:14px;letter-spacing:.16em;text-transform:uppercase;text-shadow:0 0 12px #24cfff66;margin:10px 0 2px;overflow-wrap:anywhere;';
   nav.before(pageTitle);
   function updatePageTitle() {
-    const active = shell.querySelector('.tab:not(.hidden)');
-    const names = {dashboard:'Overview',customers:'Customers',orders:'Orders',products:'Products',materials:'Materials',settings:'Settings',productionStepsPage:'Production Steps'};
+    const active = [...shell.querySelectorAll('.tab:not(.hidden)')].find(el => el.id === 'productionStepsPage') || [...shell.querySelectorAll('.tab:not(.hidden)')].find(el => el.id !== 'non-sale-projects') || shell.querySelector('.tab:not(.hidden)');
+    const names = {dashboard:'Overview',customers:'Customers',orders:'Orders',products:'Products',materials:'Materials',specialProjects:'Special Projects','non-sale-projects':'Special Projects',settings:'Settings',productionStepsPage:'Production Steps'};
     let label = names[active?.id] || 'Overview';
     if (active?.id === 'orders') {
       const tools = document.getElementById('orderTools');
