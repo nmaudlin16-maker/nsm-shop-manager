@@ -13,7 +13,10 @@
   toggle.setAttribute('aria-expanded', 'false');
   toggle.setAttribute('aria-label', 'Open navigation menu');
   toggle.innerHTML = '<span aria-hidden="true">☰</span> <span>Menu</span>';
-  nav.before(toggle);
+  const toggleRow = document.createElement('div');
+  toggleRow.id = 'nsmMenuToggleRow';
+  toggleRow.appendChild(toggle);
+  nav.before(toggleRow);
   const shade = document.createElement('div');
   shade.id = 'nsmMenuShade';
   shade.setAttribute('aria-hidden', 'true');
