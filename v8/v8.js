@@ -83,6 +83,7 @@ v8Toggle(id);if(timer){state.activeTimer={...timer};save()}};
 const v8Render=render;render=function(){v8Render();
 if(!timer&&state.activeTimer&&state.orders.some(o=>o.id===state.activeTimer.id))timer={...state.activeTimer};
 const selected=$('v8Customer').value;$('v8Customer').innerHTML='<option value="">Choose saved customer</option>'+(state.customers||[]).map(c=>`<option value="${safe(c.id)}">${safe(c.name)}</option>`).join('');$('v8Customer').value=selected;
+for(const control of projectsScreen.querySelectorAll('button')){if(control.textContent.trim()==='Add New Project')control.remove();}
 const nonSales=state.orders.filter(o=>!isSaleOrder(o));let summary=$('v8Summary');if(!summary){summary=document.createElement('section');summary.id='v8Summary';projectsScreen.prepend(summary)}
 summary.innerHTML='<h2>Donations, giveaways & prototypes</h2>'+kinds.slice(1).map(k=>{const rows=nonSales.filter(o=>o.kind===k),totals=orderTotals(rows);return `<div class="project-summary-group"><h3>${k}</h3><div class="grid project-stats">
 <div class="stat"><small>Projects</small><strong>${totals.count}</strong></div>
