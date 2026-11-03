@@ -35,7 +35,7 @@ function v8Field(id,label,type='text',value=''){const d=document.createElement('
 function v8Select(id,label,options){const d=document.createElement('div');d.className='field';d.innerHTML=`<label for="${id}">${label}</label><select id="${id}">${options.map(x=>`<option>${safe(x)}</option>`).join('')}</select>`;return d}
 const kinds=['Sale','Donation','Giveaway','Prototype'];
 const projectsScreen=document.createElement('div');projectsScreen.id='non-sale-projects';projectsScreen.className='tab hidden';$('appShell').append(projectsScreen);
-const projectsNav=document.querySelector('nav button[data-tab="specialProjects"]') || document.querySelector('nav button[data-tab="non-sale-projects"]');if(projectsNav){projectsNav.dataset.tab=projectsScreen.id;projectsNav.textContent='Special Projects';}
+const projectsNav=document.querySelector('nav button[data-tab="specialProjects"]') || document.querySelector('nav button[data-tab="non-sale-projects"]');if(projectsNav){projectsNav.dataset.tab='specialProjects';projectsNav.textContent='Special Projects';}
 document.querySelectorAll('.notice').forEach(el=>{if(el.textContent.includes('Customer-to-order linking is still a later step'))el.textContent='V8: customers link to new orders. Export a JSON backup before switching devices or importing a replacement shop.'});
 const v8Validate=validate;validate=function(data){v8Validate(data);for(const o of data.orders){if(o.kind!==undefined&&!kinds.includes(o.kind))throw Error('Invalid order purpose.');if(o.laborEntries!==undefined&&(!Array.isArray(o.laborEntries)||o.laborEntries.some(x=>!x||!Number.isFinite(Number(x.hours))||Number(x.hours)<0)))throw Error('Invalid labor entries.');}if(data.activeTimer&&(!data.orders.some(o=>o.id===data.activeTimer.id)||!Number.isFinite(data.activeTimer.start)||data.activeTimer.start<0||data.activeTimer.start>Date.now()+60000))throw Error('Invalid active timer.');return data;};
 const newSection=$('orderForm').closest('section'),editSection=$('orderTools');
@@ -67,7 +67,7 @@ const previousSave=save;save=function(){const o=state.orders[0];o.kind=kind;o.ho
 state.customers??=[];let c=state.customers.find(x=>x.id===selected)||state.customers.find(x=>x.name.trim().toLowerCase()===name.toLowerCase());
 if(!c){c={id:uid(),name,phone:'',email:'',notes:''};state.customers.push(c)}o.customerId=c.id;
 if(hours)o.laborEntries=[{at:new Date().toISOString(),hours,source:'Initial work'}];return previousSave()};
-try{v8Submit(e);if(state.orders[0]?.createdAt){draftForms.delete('orderForm');draft=draftForms.size>0;tab(kind==='Sale'?'orders':'non-sale-projects')}}finally{save=previousSave}};
+try{v8Submit(e);if(state.orders[0]?.createdAt){draftForms.delete('orderForm');draft=draftForms.size>0;tab(kind==='Sale'?'orders':'specialProjects')}}finally{save=previousSave}};
 const v8EditSubmit=$('orderToolsForm').onsubmit;
 $('orderToolsForm').onsubmit=e=>{const o=state.orders.find(x=>x.id===$('orderToolsId').value);if(!o)return v8EditSubmit(e);const previousSave=save;
 save=function(){const updated=state.orders.find(x=>x.id===o.id);if(orderToolsMode==='edit'){
