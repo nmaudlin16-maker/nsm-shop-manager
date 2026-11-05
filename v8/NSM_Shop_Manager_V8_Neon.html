@@ -226,7 +226,7 @@ function exportData(){exportJSON(state,'nsm-shop-manager-v8-backup.json')} rende
 'use strict';
 const PROJECT='https://kjooizmwkvqqacbfeqha.supabase.co',REV='_nsm_v5_revision';
 let session=null,activeUser=null,base=null,localRaw=null,busy=false,opened=false,releaseTab=null;
-let dirty=false,pending=null,conflict=false,draft=false,localBlocked=false,retryTimer=null,retryCount=0;
+let dirty=false,pending=null,conflict=false,draft=false,localBlocked=false,timer=null,retryTimer=null,retryCount=0;
 const draftForms=new Set();
 async function claimTab(){
  if(!navigator.locks)throw Error('Use a current browser on HTTPS (your GitHub Pages URL) for safe single-tab editing.');
